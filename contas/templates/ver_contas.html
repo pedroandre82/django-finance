@@ -30,7 +30,7 @@
       <p class="fonte-destaque" style="color: red;">Contas vencidas</p>
       <div class="card">
         {% if not contas_vencidas %}
-        <p class="fonte-destaque">Nenhuma conta vencida.</p>
+        <p class="fonte-destaque">Nenhuma conta vencida</p>
         {% else %}
         {% for conta in contas_vencidas %}
         <div class="linha-conta">
@@ -42,7 +42,7 @@
               Dia {{conta.dia_pagamento}}
             </div>
             <div class="col-md text-center">
-              <a href="#" class="botao-principal">PAGAR</a>
+              <a href="{% url 'pagar_conta' conta.id %}" class="botao-principal">PAGAR</a>
             </div> 
           </div>
         </div>
@@ -66,7 +66,7 @@
               Dia {{conta.dia_pagamento}}
             </div>
             <div class="col-md text-center">
-              <a href="#" class="botao-principal">PAGAR</a>
+              <a href="{% url 'pagar_conta' conta.id %}" class="botao-principal">PAGAR</a>
             </div> 
           </div>
         </div>
@@ -90,7 +90,7 @@
               Dia {{conta.dia_pagamento}}
             </div>
             <div class="col-md text-center">
-              <a href="#" class="botao-principal">PAGAR</a>
+              <a href="{% url 'pagar_conta' conta.id %}" class="botao-principal">PAGAR</a>
             </div> 
           </div>
         </div>
@@ -116,5 +116,7 @@
   </div>
   
 </div>
+<br>
+<br>
 
 {% endblock %}

@@ -4,7 +4,7 @@ from perfil.models import Conta, Categoria
 from django.contrib import messages
 from django.contrib.messages import constants
 from .models import Valores
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.template.loader import render_to_string
 import os
 from django.conf import settings
@@ -63,18 +63,34 @@ def novo_valor(request):
 def view_extrato(request):
     contas = Conta.objects.all()
     categorias = Categoria.objects.all()
+    valores = Valores.objects.all()
+
     conta_get = request.GET.get('conta')   
     categoria_get = request.GET.get('categoria')
-    valores = Valores.objects.filter(data__month=datetime.now().month)
- 
+    periodo_get = request.GET.get('periodo')
+
+    data_hoje = datetime.now() 
+    mes = data_hoje.month
+    ano = data_hoje.year
+
+    if periodo_get is not None:
+        if periodo_get == "mes_passado":
+            mes_passado = (mes - 1) if mes > 1 else 12
+            ano = ano - (1 if mes_passado == 12 else 0)
+            valores = valores.filter(data__year=ano).filter(data__month=mes_passado)
+        elif periodo_get == "mes_atual":
+            valores = valores.filter(data__year=ano).filter(data__month=mes)
+        elif periodo_get == "sete_dias":
+            data_7 = data_hoje - timedelta(days=7)
+            valores = valores.filter(data__gte=data_7).filter(data__lte=data_hoje)
+            
     if conta_get is not None:
-        valores = valores.filter(conta__id=conta_get)
+        if conta_get != "_todas":
+            valores = valores.filter(conta__id=conta_get)
 
     if categoria_get is not None:
-        valores = valores.filter(categoria__id=categoria_get)
-
-# TODO: clear fields
-# TODO: add period filter
+        if categoria_get != "_todas":
+            valores = valores.filter(categoria__id=categoria_get)
 
     return render(
         request=request,
@@ -82,7 +98,10 @@ def view_extrato(request):
         context={'valores': valores, 
                  'contas': contas, 
                  'categorias': categorias,
-                 }
+                 'selecao_conta': conta_get, 
+                 'selecao_categoria': categoria_get,
+                 'selecao_periodo': periodo_get,
+                }
     )
 
 

@@ -42,40 +42,29 @@ def definir_contas(request):
     
 
 def ver_contas(request):
-    # MES_ATUAL = datetime.now().month
-    # DIA_ATUAL = datetime.now().day
-    
-    # contas = ContaPagar.objects.all()
-
-    # contas_pagas = (
-    #     ContaPaga.objects
-    #     .filter(data_pagamento__month=MES_ATUAL)
-    #     .values('conta')
-    # )
-    # contas_vencidas = (
-    #     contas
-    #     .filter(dia_pagamento__lt=DIA_ATUAL)
-    #     .exclude(id__in=contas_pagas)
-    # )
-    # contas_proximas_vencimento = (
-    #     contas
-    #     .filter(dia_pagamento__lte=DIA_ATUAL+5)  # IDEA: personalizar esse período
-    #     .filter(dia_pagamento__gte=DIA_ATUAL)
-    #     .exclude(id__in=contas_pagas)
-    # )
-    # restantes = (
-    #     contas
-    #     .exclude(id__in=contas_vencidas)
-    #     .exclude(id__in=contas_pagas)
-    #     .exclude(id__in=contas_proximas_vencimento)
-    # )
-
     return render(
         request=request, 
         template_name='ver_contas.html', 
         context={'contas_vencidas': contas_vencidas(), 
-                 'contas_proximas_vencimento': contas_proximas_vencimento(), 
-                 'restantes': contas_restantes(),
-                 'contas_pagas': contas_pagas,
+                'contas_proximas_vencimento': contas_proximas_vencimento(), 
+                'restantes': contas_restantes(),
+                'contas_pagas': contas_pagas,
                 }
     )
+
+
+def pagar_conta(request, id):
+    conta = ContaPaga(
+        conta_id = id,
+        data_pagamento = datetime.now()
+    )
+    conta.save()
+
+    messages.add_message(
+        request=request,
+        level=constants.SUCCESS,
+        message=f"Conta paga com sucesso."
+    )
+    return redirect('/contas/ver_contas')
+
+    

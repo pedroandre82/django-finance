@@ -21,8 +21,6 @@ def update_valor_categoria(request, id):
     novo_valor = json.load(request)['novo_valor']
     categoria = Categoria.objects.get(id=id)
 
-#TODO: validar o novo_valor
-
     categoria.valor_planejamento = novo_valor
     categoria.save()
 
