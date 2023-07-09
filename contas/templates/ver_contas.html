@@ -51,7 +51,7 @@
       </div>
       <br>
       <br>
-      <p class="fonte-destaque" style="color: #E96363;">Contas próximas do vencimento</p>
+      <p class="fonte-destaque" style="color: #E96363;">Contas próximas ao vencimento</p>
       <div class="card">
         {% if not contas_proximas_vencimento %}
         <p class="fonte-destaque">Nenhuma conta próxima ao vencimento</p>
@@ -101,6 +101,16 @@
     </div>
     
     <div class="col-md-4">
+      <!-- Resumo das contas -->
+      <p class="fonte-destaque">Relatório</p>
+      <hr>
+      <p class="fonte-destaque" style="color: red;">Vencidas: {{contas_vencidas|length}}</p>
+      <hr>
+      <p class="fonte-destaque" style="color: #E96363;">Perto de vencer: {{contas_proximas_vencimento|length}}</p>
+      <hr>
+      <p class="fonte-destaque">Restantes: {{restantes|length}}</p>
+      <hr>
+      <p class="fonte-destaque" style="color: green;">Pagas: {{contas_pagas|length}}</p>
     </div>
     
   </div>

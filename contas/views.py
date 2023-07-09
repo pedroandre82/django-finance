@@ -4,6 +4,7 @@ from .models import ContaPaga, ContaPagar
 from django.contrib import messages
 from django.contrib.messages import constants
 from datetime import datetime
+from perfil.utils import contas_pagas, contas_proximas_vencimento, contas_restantes, contas_vencidas
 
 # Create your views here.
 
@@ -41,42 +42,40 @@ def definir_contas(request):
     
 
 def ver_contas(request):
-    MES_ATUAL = datetime.now().month
-    DIA_ATUAL = datetime.now().day
+    # MES_ATUAL = datetime.now().month
+    # DIA_ATUAL = datetime.now().day
     
-    contas = ContaPagar.objects.all()
+    # contas = ContaPagar.objects.all()
 
-    contas_pagas = (
-        ContaPaga.objects
-        .filter(data_pagamento__month=MES_ATUAL)
-        .values('conta')
-    )
-    contas_vencidas = (
-        contas
-        .filter(dia_pagamento__lt=DIA_ATUAL)
-        .exclude(id__in=contas_pagas)
-    )
-    contas_proximas_vencimento = (
-        contas
-        .filter(dia_pagamento__lte=DIA_ATUAL+5)  # IDEA: personalizar esse período
-        .filter(dia_pagamento__gte=DIA_ATUAL)
-        .exclude(id__in=contas_pagas)
-    )
-    restantes = (
-        contas
-        .exclude(id__in=contas_vencidas)
-        .exclude(id__in=contas_pagas)
-        .exclude(id__in=contas_proximas_vencimento)
-    )
+    # contas_pagas = (
+    #     ContaPaga.objects
+    #     .filter(data_pagamento__month=MES_ATUAL)
+    #     .values('conta')
+    # )
+    # contas_vencidas = (
+    #     contas
+    #     .filter(dia_pagamento__lt=DIA_ATUAL)
+    #     .exclude(id__in=contas_pagas)
+    # )
+    # contas_proximas_vencimento = (
+    #     contas
+    #     .filter(dia_pagamento__lte=DIA_ATUAL+5)  # IDEA: personalizar esse período
+    #     .filter(dia_pagamento__gte=DIA_ATUAL)
+    #     .exclude(id__in=contas_pagas)
+    # )
+    # restantes = (
+    #     contas
+    #     .exclude(id__in=contas_vencidas)
+    #     .exclude(id__in=contas_pagas)
+    #     .exclude(id__in=contas_proximas_vencimento)
+    # )
 
     return render(
         request=request, 
         template_name='ver_contas.html', 
-        context={'contas_vencidas': contas_vencidas, 
-                 'contas_proximas_vencimento': contas_proximas_vencimento, 
-                 'restantes': restantes,
-                #  'contas_pagas': contas_pagas,
+        context={'contas_vencidas': contas_vencidas(), 
+                 'contas_proximas_vencimento': contas_proximas_vencimento(), 
+                 'restantes': contas_restantes(),
+                 'contas_pagas': contas_pagas,
                 }
     )
-
-# TODO: Coluna Relatório com o total de contas

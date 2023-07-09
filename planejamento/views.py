@@ -31,11 +31,17 @@ def update_valor_categoria(request, id):
 
 def ver_planejamento(request):
     categorias = Categoria.objects.all()
-
-    # TODO: Barra de total
+    
+    total_planejado = calcula_total(categorias, "valor_planejamento")
+    total_atingido = sum([categoria.total_gasto() for categoria in categorias])
+    porcentagem_atingida = total_atingido * 100 / total_planejado
 
     return render(
         request=request,
         template_name="ver_planejamento.html",
-        context={"categorias": categorias}
+        context={"categorias": categorias,
+                 "total_planejado": f"{total_planejado:,.02f}",
+                 "total_atingido": f"{total_atingido:,.02f}",
+                 "porcentagem_atingida": int(porcentagem_atingida),
+                 }
     )

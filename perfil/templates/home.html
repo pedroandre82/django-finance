@@ -11,6 +11,9 @@
     <br>
     <br>
     <div class="row">
+      <div class="col-md-6">
+        <span class="fonte-destaque"><center>{{mes_atual}}</center></span>
+      </div>
       <div class="col-md-3">
         <a style="text-decoration: none; color:white;" href="{% url 'novo_valor' %}">
           <div class="card">
@@ -70,30 +73,34 @@
           <div class="row">
             <div class="col-md">
               <div class="saldo">
-                <span class="fonte-destaque">Saldo mensal</span>
+                <span class="fonte-destaque">Ganhos no mês</span>
                 <br>
-                <span class="font-light">R$ 0.000,00</span>
+                <span class="font-light">R$ {{total_ganhos}}</span>
               </div>
             </div>
             <div class="col-md">
               <div class="despesa">
-                <span class="fonte-destaque">Despesa mensal</span>
+                <span class="fonte-destaque">Meta de despesas</span>
                 <br>
-                <span class="font-light">R$ 0.000,00</span>
+                <span class="font-light">R$ {{total_despesas}}</span>
               </div>
             </div>
           </div>
           <hr class="hr-borda">
-          <span class="fonte-destaque">Total livre</span>
+          <!-- <span class="fonte-destaque">Total livre</span>
           <span class="font-light negativo">R$ 0.000,00</span>
+          <hr class="hr-borda"> -->
+          <a href="{% url 'novo_valor' %}" class="botao-principal">Adicionar entrada/saída</a>
           <hr class="hr-borda">
-          <a href="{% url 'definir_planejamento' %}" class="botao-principal">Gerenciar gastos mensais</a>
+          <a href="{% url 'definir_planejamento' %}" class="botao-principal">Gerenciar planejamento mensal</a>
+          <hr class="hr-borda">
+          <a href="{% url 'ver_planejamento' %}" class="botao-principal">Vizualizar planejamento detalhado</a>
         </div>
       </div>
     </div>
     <br>
     <div class="row">
-      <div class="col-md-4">
+      <!-- <div class="col-md-4">
         <div class="card">
           <div class="saldo">
             <span class="fonte-destaque">Planejamento</span>
@@ -103,8 +110,8 @@
           <hr class="hr-borda">
           <a href="{% url 'ver_planejamento' %}" class="botao-principal">Ver planejamento</a>
         </div>
-      </div>
-      <div class="col-md-8">
+      </div> -->
+      <div class="col-md-6">
         <div class="card">
           <span class="fonte-destaque">Equilíbrio financeiro</span>
           <hr class="hr-borda">
@@ -131,35 +138,42 @@
           </div>
 
           <hr class="hr-borda">
-          <a href="{% url 'gerenciar' %}" class="botao-principal">Alterar categorias essenciais</a>
+          <a href="{% url 'gerenciar' %}" class="botao-principal">Gerenciar categorias</a>
 
         </div>
       </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-md-4">
-      </div>
-      
-      <div class="col-md-8">
+      <div class="col-md-6">
         <div class="card">
-          <span class="fonte-destaque">Gerenciar contas</span>
+          <span class="fonte-destaque">Gerenciar faturas</span>
           <hr class="hr-borda">
 
-          <span class="fonte-destaque">Próximas do vencimento</span>
-          <span class="fonte-light">3 contas próximas do vencimento</span>
+          <span class="fonte-destaque">Próximas ao vencimento</span>
+          {% if contas_proximas == 0 %}
+            <span class="fonte-light">Nenhuma conta próxima ao vencimento</span>
+          {% elif contas_proximas == 1 %}
+            <span class="fonte-light">1 conta próxima ao vencimento</span>
+          {% else %}
+            <span class="fonte-light">{{contas_proximas}} contas próximas do vencimento</span>
+          {% endif %}
           <br>
           <span class="fonte-destaque negativo">Vencidas</span>
-          <span class="fonte-light">0 contas vencidas</span>
+          {% if contas_vencidas == 0 %}
+            <span class="fonte-light">Nenhuma conta vencida</span>
+          {% elif contas_vencidas == 1 %}
+            <span class="fonte-light">1 conta vencida</span>
+          {% else %}
+            <span class="fonte-light">{{contas_vencidas}} contas vencidas</span>
+          {% endif %}
 
           <hr class="hr-borda">
-          
           <a href="{% url 'ver_contas' %}" class="botao-principal">Ver mais</a>
+          
+          <hr class="hr-borda">
+          <a href="{% url 'definir_contas' %}" class="botao-principal">Nova conta mensal</a>
 
         </div>
-      </div>
     </div>
-    <br>
-    <br>
   </div>
+  <br>
+  <br>
 {% endblock %}

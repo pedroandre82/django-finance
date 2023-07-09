@@ -4,15 +4,19 @@ from .models import Conta, Categoria
 from extrato.models import Valores
 from django.contrib import messages
 from django.contrib.messages import constants
-from .utils import calcula_total, calcula_equilibrio_financeiro
+from .utils import calcula_total, calcula_equilibrio_financeiro, contas_proximas_vencimento, contas_vencidas
 from django.db.models import Sum
 from datetime import datetime
 
+MESES = ("Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro")
+
 # Create your views here.
 def home(request):
+    mes_atual = datetime.now().month
+    ano_atual = datetime.now().year
 
     # Total de entradas e saidas
-    valores = Valores.objects.filter(data__month=datetime.now().month)
+    valores = Valores.objects.filter(data__month=mes_atual)
     entradas = valores.filter(tipo="E")
     saidas = valores.filter(tipo="S")
     total_entradas = calcula_total(entradas, "valor")
@@ -26,11 +30,17 @@ def home(request):
     percentual_gastos_essenciais, percentual_gastos_nao_essenciais = calcula_equilibrio_financeiro()
 
     # Gastos mensais
-    total_mensal = (
-        Categoria.objects
-        .filter()
+    categorias = Categoria.objects.all()
+    total_despesas = (
+        categorias
+        .aggregate(Sum("valor_planejamento"))["valor_planejamento__sum"]
     )
+    total_ganhos = sum([categoria.total_recebido() for categoria in categorias])  # mesma coisa?
 
+    # Contas vencidas e proximas ao vencimento
+    n_contas_proximas = len(contas_proximas_vencimento())
+    n_contas_vencidas = len(contas_vencidas())
+    
     return render(request=request, 
                   template_name="home.html",
                   context={'contas': contas,
@@ -39,6 +49,11 @@ def home(request):
                            'total_saidas': total_saidas,
                            'percentual_gastos_essenciais': percentual_gastos_essenciais,
                            'percentual_gastos_nao_essenciais': percentual_gastos_nao_essenciais,
+                           'total_despesas': f"{total_despesas:,.02f}",
+                           'total_ganhos': f"{total_ganhos:,.02f}",
+                           'mes_atual': f"{MESES[mes_atual-1]} de {ano_atual}",
+                           'contas_proximas': n_contas_proximas,
+                           'contas_vencidas': n_contas_vencidas,
                            }
     )
 
